@@ -15,6 +15,8 @@ const page = await browser.newPage();
 
 await page.goto("https://www.sinyi.com.tw/");
 
+await page.waitForSelector(".kycCardGridWeb");
+
 await page.screenshot({ path: "downloads/screenshot.png", fullPage: false });
 
 browser.close();
