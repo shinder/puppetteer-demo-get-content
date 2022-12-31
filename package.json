@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "puppeteer": "^19.4.1"
+    "puppeteer": "^19.4.1",
+    "uuid": "^9.0.0"
   }
 }

@@ -1,7 +1,8 @@
+import fs from "fs/promises";
+import { v4 as uuidv4 } from "uuid";
 import puppeteer from "puppeteer";
 
-
-const targetSite = 'https://www.sinyi.com.tw/';
+const targetSite = "https://www.sinyi.com.tw/";
 
 // 建立瀏覽器物件
 const browser = await puppeteer.launch({
@@ -19,10 +20,24 @@ const page = await browser.newPage();
 await page.goto(targetSite);
 
 // 等待頁面內的選擇器出現在往下執行
-const elHandle = await page.waitForSelector('.container.kycCardGridWeb .SmallInfoCardBody');
+const elHandle = await page.waitForSelector(
+  ".container.kycCardGridWeb .SmallInfoCardBody"
+);
 
-const imgUrl = await elHandle.evaluate(el=> el.querySelector('.largeImg img').src );
+const imgUrl = await elHandle.evaluate(
+  (el) => el.querySelector(".largeImg img").src
+);
+console.log({ imgUrl });
 
-console.log(data)
+// 頁面跳到圖片 URL
+const response = await page.goto(imgUrl);
+// const headers = response.headers();
+// console.log(headers);
+
+// 取得原本的副檔名
+const ext = imgUrl.toLowerCase().split('.').pop();
+const filename = uuidv4() + '.' + ext;
+
+await fs.writeFile(`downloads/${filename}`, await response.buffer());
 
 browser.close();

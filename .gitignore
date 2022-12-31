@@ -1,7 +1,8 @@
 
 .vscode
 .idea
+
 node_modules
+downloads
 
-
-.package-lock.json
+package-lock.json
