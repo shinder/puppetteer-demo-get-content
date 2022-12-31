@@ -20,29 +20,42 @@ const page = await browser.newPage();
 await page.goto(targetSite);
 
 // 等待頁面內的選擇器出現在往下執行
-await page.waitForSelector(
-  ".container.kycCardGridWeb .SmallInfoCardBody"
-);
+await page.waitForSelector(".container.kycCardGridWeb .SmallInfoCardBody");
 
 let data = [];
 const elHandles = await page.$$(".container.kycCardGridWeb .SmallInfoCardBody");
 
-for(let h of elHandles){
-  const item = await h.evaluate(el=>{
-    const imgUrl = el.querySelector('.largeImg img').src;
-    const price =  el.querySelector('.SmallInfoCard_Type .SmallInfoCard_Type_Price').innerText;
-    const name =  el.querySelector('.SmallInfoCard_Type .SmallInfoCard_Type_Name').innerText;
-    const address =  el.querySelector('.SmallInfoCard_Type .SmallInfoCard_Type_Address').innerText;
-    const info =  [...el.querySelectorAll('.SmallInfoCard_Type .SmallInfoCard_Type_HouseInfo span')].map(v=>v.innerText);
-    return {imgUrl, price, name, address, info };
-  })
+for (let h of elHandles) {
+  const item = await h.evaluate((el) => {
+    const imgUrl = el.querySelector(".largeImg img").src;
+
+    const price = el.querySelector(
+      ".SmallInfoCard_Type .SmallInfoCard_Type_Price"
+    ).innerText;
+
+    const name = el.querySelector(
+      ".SmallInfoCard_Type .SmallInfoCard_Type_Name"
+    ).innerText;
+
+    const address = el.querySelector(
+      ".SmallInfoCard_Type .SmallInfoCard_Type_Address"
+    ).innerText;
+
+    const info = [
+      ...el.querySelectorAll(
+        ".SmallInfoCard_Type .SmallInfoCard_Type_HouseInfo span"
+      ),
+    ].map((v) => v.innerText);
+    
+    return { imgUrl, price, name, address, info };
+  });
   data.push(item);
 }
 
-for(let item of data){
+for (let item of data) {
   const response = await page.goto(item.imgUrl);
-  const ext = item.imgUrl.toLowerCase().split('.').pop();
-  const filename = uuidv4() + '.' + ext;
+  const ext = item.imgUrl.toLowerCase().split(".").pop();
+  const filename = uuidv4() + "." + ext;
   item.img = filename;
   await fs.writeFile(`downloads/${filename}`, await response.buffer());
 }
